@@ -1,6 +1,7 @@
 package com.dealerscraper.usecases;
 
-import com.dealerscraper.infrastructure.component.comparator.ReviewComparator;
+import com.dealerscraper.infrastructure.component.evaluator.Evaluator;
+import com.dealerscraper.model.Evaluation;
 import com.dealerscraper.model.ReviewEntry;
 import lombok.RequiredArgsConstructor;
 
@@ -11,11 +12,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OverlyPositiveReviews {
 
-    private final ReviewComparator reviewComparator;
+    private final Evaluator evaluator;
 
-    public List<ReviewEntry> retrieveTopReviews(final Set<ReviewEntry> reviewEntries) {
+    public List<Evaluation> retrieveTopThreeEvaluations(final Set<ReviewEntry> reviewEntries) {
         return reviewEntries.stream()
-                .sorted(reviewComparator)
+                .map(reviewEntry -> new Evaluation(evaluator.evaluate(reviewEntry), reviewEntry))
+                .sorted()
                 .limit(3)
                 .collect(Collectors.toUnmodifiableList());
     }

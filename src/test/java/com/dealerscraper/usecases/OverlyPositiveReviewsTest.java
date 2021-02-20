@@ -1,35 +1,49 @@
 package com.dealerscraper.usecases;
 
-import com.dealerscraper.infrastructure.component.comparator.ReviewComparator;
+import com.dealerscraper.infrastructure.component.evaluator.Evaluator;
+import com.dealerscraper.model.Evaluation;
 import com.dealerscraper.model.ReviewEntry;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.List;
+import java.util.Comparator;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+class TestReviewComparator implements Comparator<ReviewEntry> {
+
+    @Override
+    public int compare(final ReviewEntry review1, final ReviewEntry review2) {
+        return review2.getRating().compareTo(review1.getRating());
+    }
+}
+
 class OverlyPositiveReviewsTest {
 
-    private final ReviewComparator reviewComparator = mock(ReviewComparator.class);
-    private final OverlyPositiveReviews overlyPositiveReviews = new OverlyPositiveReviews(reviewComparator);
+    private final Evaluator evaluator = mock(Evaluator.class);
+    private final OverlyPositiveReviews overlyPositiveReviews = new OverlyPositiveReviews(evaluator);
 
     @Test
     void retrieveTopReviews() {
-        final ReviewEntry reviewEntry1 = new ReviewEntry("Test", "Description", "Feb 12", 10);
-        final ReviewEntry reviewEntry2 = new ReviewEntry("Test", "Description", "Feb 12", 12);
-        final ReviewEntry reviewEntry3 = new ReviewEntry("Test", "Description", "Feb 12", 14);
-        final ReviewEntry reviewEntry4 = new ReviewEntry("Test", "Description", "Feb 12", 16);
+        final ReviewEntry reviewEntry1 = mock(ReviewEntry.class);
+        final ReviewEntry reviewEntry2 = mock(ReviewEntry.class);
+        final ReviewEntry reviewEntry3 = mock(ReviewEntry.class);
+        final ReviewEntry reviewEntry4 = mock(ReviewEntry.class);
 
         final Set<ReviewEntry> reviewEntries = Set.of(reviewEntry1, reviewEntry2, reviewEntry3, reviewEntry4);
 
-        final var topReviews = overlyPositiveReviews.retrieveTopReviews(reviewEntries);
+        when(evaluator.evaluate(reviewEntry1)).thenReturn(10);
+        when(evaluator.evaluate(reviewEntry2)).thenReturn(12);
+        when(evaluator.evaluate(reviewEntry3)).thenReturn(14);
+        when(evaluator.evaluate(reviewEntry4)).thenReturn(16);
 
-        // TODO implement the tests of the usecase
+        final var topEvaluations = overlyPositiveReviews.retrieveTopThreeEvaluations(reviewEntries);
 
+        assertThat(topEvaluations).containsExactly(new Evaluation(16, reviewEntry4),
+                new Evaluation(14, reviewEntry3),
+                new Evaluation(12, reviewEntry2));
     }
 }

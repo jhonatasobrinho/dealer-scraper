@@ -18,10 +18,10 @@ public class ReviewEntryParser {
 
     private ReviewEntry parse(final DomNode node) {
         final var wrapperSection = getContentByXPathContainingClass(node, "review-wrapper");
-        final var dateSection = getContentByXPathContainingClass(node, "review-date");
-
         final var title = getTitle(wrapperSection);
         final var description = getDescription(wrapperSection);
+
+        final var dateSection = getContentByXPathContainingClass(node, "review-date");
         final var date = getDate(dateSection);
         final var rating = getRating(dateSection);
 
@@ -42,7 +42,8 @@ public class ReviewEntryParser {
     }
 
     private String getDescription(final List<HtmlDivision> wrapperSection) {
-        return wrapperSection.get(1).querySelector("p").getVisibleText();
+        final var p = wrapperSection.get(1).querySelector("p");
+        return p.getVisibleText();
     }
 
     private String getDate(List<HtmlDivision> dateSection) {
