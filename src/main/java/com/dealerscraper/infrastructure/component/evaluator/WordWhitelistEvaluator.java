@@ -1,24 +1,59 @@
 package com.dealerscraper.infrastructure.component.evaluator;
 
+import com.dealerscraper.exceptions.FilePathNotProvidedException;
 import com.dealerscraper.model.ReviewEntry;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.function.BiFunction;
+
 public class WordWhitelistEvaluator implements Evaluator {
 
+    private final String filePath;
     private final Evaluator nextEvaluator;
 
-    public WordWhitelistEvaluator() {
-        this.nextEvaluator = null;
+    public WordWhitelistEvaluator(final String filePath, final Evaluator nextEvaluator) {
+        if (filePath == null || filePath.isEmpty()) {
+            throw new FilePathNotProvidedException("Path to the file not provided to word whitelist evaluator");
+        }
+
+        this.filePath = filePath;
+        this.nextEvaluator = nextEvaluator;
+    }
+
+    public WordWhitelistEvaluator(final String filePath) {
+        this(filePath, null);
     }
 
     @Override
     public Integer evaluate(final ReviewEntry reviewEntry) {
-        return 0;
+
+        try {
+            final var lines = Files.lines(Paths.get(Objects.requireNonNull(filePath))).map(String::toLowerCase);
+
+            final BiFunction<Integer, String, Integer> reduceIfReviewEntryContainsWord = (subtotal, word) -> {
+                if (reviewEntryContainsWord(reviewEntry, word)) {
+                    return subtotal + 1;
+                }
+
+                return subtotal;
+            };
+
+            return lines.reduce(0, reduceIfReviewEntryContainsWord, Integer::sum);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     @Override
     public Integer getGetNextEvaluatorValue(final ReviewEntry reviewEntry) {
-        return null;
+        return nextEvaluator != null ? nextEvaluator.evaluate(reviewEntry) : 0;
+    }
+
+    private boolean reviewEntryContainsWord(final ReviewEntry reviewEntry, final String word) {
+        return reviewEntry.getDescription().toLowerCase().contains(word);
     }
 }

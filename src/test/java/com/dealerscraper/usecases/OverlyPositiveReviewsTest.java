@@ -4,7 +4,6 @@ import com.dealerscraper.infrastructure.component.evaluator.Evaluator;
 import com.dealerscraper.model.Evaluation;
 import com.dealerscraper.model.ReviewEntry;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Comparator;
 import java.util.Set;

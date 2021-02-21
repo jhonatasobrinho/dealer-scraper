@@ -1,5 +1,6 @@
 package com.dealerscraper.infrastructure.component.parser;
 
+import com.dealerscraper.model.ReviewEntry;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
@@ -8,7 +9,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,29 +20,27 @@ class ReviewEntryParserTest {
     private final ReviewEntryParser reviewEntryParser = new ReviewEntryParser();
 
     @Test
-    void shouldParseOneReview() {
-        final var expectedTitle = "title";
-        final var expectedDate = "12 Feb";
-        final var expectedDescription = "Test description";
-        final var expectedRating = 10;
+    void shouldParseReviews() {
+        final var reviewEntry1 = buildReviewEntry("title", "12 Feb", "Test description", 10);
+        final var reviewEntryNode1 = mockReviewEntryNode(reviewEntry1.getTitle(), reviewEntry1.getDate(), reviewEntry1.getDescription(), reviewEntry1.getRating());
 
-        final var reviewEntryNode = mockReviewEntry(expectedTitle, expectedDate, expectedDescription, expectedRating);
+        final var reviewEntry2 = buildReviewEntry("Other", "12 Mar", "Other description", 15);
+        final var reviewEntryNode2 = mockReviewEntryNode(reviewEntry2.getTitle(), reviewEntry2.getDate(), reviewEntry2.getDescription(), reviewEntry2.getRating());
 
         @SuppressWarnings("unchecked")
         final DomNodeList<DomNode> reviewEntryList = mock(DomNodeList.class);
-        when(reviewEntryList.stream()).thenReturn(Stream.of(reviewEntryNode));
+        when(reviewEntryList.stream()).thenReturn(Stream.of(reviewEntryNode1, reviewEntryNode2));
 
         final var parsedReviews = reviewEntryParser.parse(reviewEntryList);
 
-        final var parsedReview = parsedReviews.stream().findFirst().orElseThrow();
-
-        assertThat(parsedReview.getTitle()).isEqualTo(expectedTitle);
-        assertThat(parsedReview.getDescription()).isEqualTo(expectedDescription);
-        assertThat(parsedReview.getDate()).isEqualTo(expectedDate);
-        assertThat(parsedReview.getRating()).isEqualTo(expectedRating);
+        assertThat(parsedReviews).containsExactlyInAnyOrder(reviewEntry1, reviewEntry2);
     }
 
-    private DomNode mockReviewEntry(final String title, final String date, final String description, final int rating) {
+    private ReviewEntry buildReviewEntry(final String title, final String date, final String description, final int rating) {
+        return new ReviewEntry(title, description, date,rating);
+    }
+
+    private DomNode mockReviewEntryNode(final String title, final String date, final String description, final int rating) {
         final var reviewEntryNode = mock(DomNode.class);
 
         // get title

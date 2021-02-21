@@ -8,7 +8,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.Integer.*;
+import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 
 public class ReviewEntryParser {

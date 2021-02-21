@@ -17,8 +17,9 @@ public class OverlyPositiveReviews {
     public List<Evaluation> retrieveTopThreeEvaluations(final Set<ReviewEntry> reviewEntries) {
         return reviewEntries.stream()
                 .map(reviewEntry -> new Evaluation(evaluator.evaluate(reviewEntry), reviewEntry))
+                .peek(System.out::println)
                 .sorted()
-                .limit(3)
+                .limit(10)
                 .collect(Collectors.toUnmodifiableList());
     }
 }
