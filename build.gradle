@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'com'
@@ -7,6 +8,10 @@ version '1.0'
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClassName = "com.dealerscraper.Application"
 }
 
 dependencies {

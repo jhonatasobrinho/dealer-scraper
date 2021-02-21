@@ -19,7 +19,7 @@ public class OverlyPositiveReviews {
                 .map(reviewEntry -> new Evaluation(evaluator.evaluate(reviewEntry), reviewEntry))
                 .peek(System.out::println)
                 .sorted()
-                .limit(10)
+                .limit(3)
                 .collect(Collectors.toUnmodifiableList());
     }
 }
