@@ -12,14 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class TestReviewComparator implements Comparator<ReviewEntry> {
-
-    @Override
-    public int compare(final ReviewEntry review1, final ReviewEntry review2) {
-        return review2.getRating().compareTo(review1.getRating());
-    }
-}
-
 class OverlyPositiveReviewsTest {
 
     private final Evaluator evaluator = mock(Evaluator.class);
