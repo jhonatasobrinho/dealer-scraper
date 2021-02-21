@@ -38,7 +38,7 @@ public class ReviewEntryScraper {
                 htmlPage = webClient.getPage(seedUrl);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ReviewScrapeFailedException(e);
         }
 
         return reviewEntries;

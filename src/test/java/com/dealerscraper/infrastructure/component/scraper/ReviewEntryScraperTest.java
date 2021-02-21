@@ -8,6 +8,7 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -15,8 +16,8 @@ import java.util.Set;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 class ReviewEntryScraperTest {
 
@@ -63,6 +64,16 @@ class ReviewEntryScraperTest {
         final var scrapedReviews = reviewEntryScraper.scrape(webClient);
 
         assertThat(scrapedReviews).isEqualTo(expectedReviewEntries);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenFailedToScrape() throws IOException {
+        final var webClient = mock(WebClient.class);
+        when(webClient.getPage(buildUrl("dealer/McKaig-Chevrolet-Buick-A-Dealer-For-The-People-dealer-reviews-23685/?filter=ONLY_POSITIVE"))).thenThrow(new IOException());
+
+        assertThatThrownBy(() -> reviewEntryScraper.scrape(webClient))
+                .isInstanceOf(ReviewScrapeFailedException.class)
+                .hasMessage("Failed to scrape the reviews");
     }
 
     private String buildUrl(final String location) {

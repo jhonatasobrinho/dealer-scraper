@@ -4,9 +4,7 @@ import com.dealerscraper.exceptions.FilePathNotProvidedException;
 import com.dealerscraper.model.ReviewEntry;
 import lombok.SneakyThrows;
 
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -32,7 +30,6 @@ public class WordWhitelistEvaluator implements Evaluator {
     @Override
     @SneakyThrows
     public Integer evaluate(final ReviewEntry reviewEntry) {
-
         final var lines = Files.lines(Paths.get(Objects.requireNonNull(filePath))).map(String::toLowerCase);
 
         final BiFunction<Integer, String, Integer> reduceIfReviewEntryContainsWord = (subtotal, word) -> {
@@ -43,7 +40,7 @@ public class WordWhitelistEvaluator implements Evaluator {
             return subtotal;
         };
 
-        return lines.reduce(0, reduceIfReviewEntryContainsWord, Integer::sum);
+        return lines.reduce(0, reduceIfReviewEntryContainsWord, Integer::sum) + getGetNextEvaluatorValue(reviewEntry);
     }
 
     @Override
