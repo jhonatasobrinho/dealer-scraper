@@ -11,27 +11,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class WordWhitelistEvaluatorTest {
+class PointingWordsEvaluatorTest {
 
-    private final WordWhitelistEvaluator wordWhitelistEvaluator = new WordWhitelistEvaluator("src/test/resources/test-words.txt");
+    private final PointingWordsEvaluator pointingWordsEvaluator = new PointingWordsEvaluator("src/test/resources/test-words.txt");
 
     @Test
     void shouldThrowExceptionWhenFilePathIsNull() {
-        assertThatThrownBy(() -> new WordWhitelistEvaluator(null))
+        assertThatThrownBy(() -> new PointingWordsEvaluator(null))
                 .isInstanceOf(FilePathNotProvidedException.class)
                 .hasMessage("Path to the file not provided to word whitelist evaluator");
     }
 
     @Test
     void shouldThrowExceptionWhenFilePathIsEmpty() {
-        assertThatThrownBy(() -> new WordWhitelistEvaluator(""))
+        assertThatThrownBy(() -> new PointingWordsEvaluator(""))
                 .isInstanceOf(FilePathNotProvidedException.class)
                 .hasMessage("Path to the file not provided to word whitelist evaluator");
     }
 
     @Test
     void shouldThrowExceptionWhenFileDoesntExist() {
-        assertThatThrownBy(() -> new WordWhitelistEvaluator("bla").evaluate(mock(ReviewEntry.class)))
+        assertThatThrownBy(() -> new PointingWordsEvaluator("bla").evaluate(mock(ReviewEntry.class)))
                 .isInstanceOf(NoSuchFileException.class);
     }
 
@@ -39,7 +39,7 @@ class WordWhitelistEvaluatorTest {
     void shouldReturnThreeWhenContainsThreeWordsThatAreOnWordWhiteList() {
         final ReviewEntry reviewEntry = mockReviewEntry("Test description other");
 
-        final var actual = wordWhitelistEvaluator.evaluate(reviewEntry);
+        final var actual = pointingWordsEvaluator.evaluate(reviewEntry);
 
         final var expectedEvaluation = 3;
 
@@ -50,7 +50,7 @@ class WordWhitelistEvaluatorTest {
     void shouldReturnZeroWhenDoesntContainAnyWordThatAreOnWordWhiteList() {
         final ReviewEntry reviewEntry = mockReviewEntry("christmas");
 
-        final var actual = wordWhitelistEvaluator.evaluate(reviewEntry);
+        final var actual = pointingWordsEvaluator.evaluate(reviewEntry);
 
         final var expectedEvaluation = 0;
 

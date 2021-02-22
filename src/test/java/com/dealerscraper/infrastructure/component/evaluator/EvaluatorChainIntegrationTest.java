@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 public class EvaluatorChainIntegrationTest {
 
-    private final Evaluator evaluatorChain = new RegexEvaluator(new WordWhitelistEvaluator("src/test/resources/test-words.txt", new RatingEvaluator()));
+    private final Evaluator evaluatorChain = new RegexEvaluator(new PointingWordsEvaluator("src/test/resources/test-words.txt", new RatingEvaluator()));
 
     @Test
     void shouldChainCallToTheEvaluatorsAndAcummulateTheEvaluation() {

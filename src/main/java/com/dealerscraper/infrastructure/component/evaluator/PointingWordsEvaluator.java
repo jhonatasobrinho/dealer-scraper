@@ -9,12 +9,12 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-public class WordWhitelistEvaluator implements Evaluator {
+public class PointingWordsEvaluator implements Evaluator {
 
     private final String filePath;
     private final Evaluator nextEvaluator;
 
-    public WordWhitelistEvaluator(final String filePath, final Evaluator nextEvaluator) {
+    public PointingWordsEvaluator(final String filePath, final Evaluator nextEvaluator) {
         if (filePath == null || filePath.isEmpty()) {
             throw new FilePathNotProvidedException("Path to the file not provided to word whitelist evaluator");
         }
@@ -23,7 +23,7 @@ public class WordWhitelistEvaluator implements Evaluator {
         this.nextEvaluator = nextEvaluator;
     }
 
-    public WordWhitelistEvaluator(final String filePath) {
+    public PointingWordsEvaluator(final String filePath) {
         this(filePath, null);
     }
 
